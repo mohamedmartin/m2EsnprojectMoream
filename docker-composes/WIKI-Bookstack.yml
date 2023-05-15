@@ -1,44 +1,32 @@
-version: "2"
+version: "3.9"
+
 services:
-  bookstack:
-    image: lscr.io/linuxserver/bookstack
-    container_name: bookstack
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - APP_URL=
-      - DB_HOST=bookstack_db
-      - DB_USER=bookstack
-      - DB_PASS=HJsyuzebns7676
-      - DB_DATABASE=bookstackapp
-    volumes:
-      - bookstack-web-data:/config
+  bootstack-client:
+    image: bitnami/mediawiki:latest
+    container_name: bootstack-client
+    restart: always
     ports:
-      - 6875:80
-    restart: unless-stopped
-    depends_on:
-      - bookstack_db
-  bookstack_db:
-    image: mariadb:latest
-    container_name: mariadb
+      - "8081:8080"
     environment:
-      - PUID=1000
-      - PGID=1000
-      - MYSQL_ROOT_PASSWORD=HJsyuzebns7676
-      - TZ=Europe/London
-      - MYSQL_DATABASE=bookstackapp
-      - MYSQL_USER=bookstack
-      - MYSQL_PASSWORD=HJsyuzebns7676
+      - MEDIAWIKI_DATABASE_HOST=bootstack-db-client
+      - MEDIAWIKI_DATABASE_NAME=mediawiki
+      - MEDIAWIKI_DATABASE_USER=mediawiki
+      - MEDIAWIKI_DATABASE_PASSWORD=mediawiki
+    depends_on:
+      - bootstack-db-client
+
+  bootstack-db-client:
+    image: mariadb
+    container_name: bootstack-db-client
+    restart: always
+    environment:
+      - MYSQL_DATABASE=mediawiki
+      - MYSQL_USER=mediawiki
+      - MYSQL_PASSWORD=mediawiki
+      - MYSQL_ROOT_PASSWORD=root
     volumes:
-      - bookstack-db-data:/var/lib/mysql
-      - bookstack-db-config:/config
-    restart: unless-stopped
+      - ./bootstack-data:/data        
 
 volumes:
-  bookstack-web-data:
-    driver: local
-  bookstack-db-data:
-    driver: local
-  bookstack-db-config:
-    driver: local
- 
+  bootstack-db-data:
+  
