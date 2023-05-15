@@ -1,53 +1,33 @@
-# DOCKER v3 + OCS INVENTORY
+version: "3.9"
 
-version: '3'
-services :
-  webocs:
-    image : ocsinventory/ocsinventory-docker-image:2.9
-    # container_name : ocsinventory-server3    
-    stdin_open: true 
-    tty: true 
-    environment :
-      OCS_DBNAME : webocs
-      OCS_DBSERVER_READ : inventaire
-      OCS_DBSERVER_WRITE : inventaire
-      OCS_DBUSER : inventaire  
-      OCS_DBPASS : inventaire
-      
-    volumes :
-      - ocssrv:/usr/share/ocsinventory-reports/
-      - ocssrv:/etc/ocsinventory-reports/
-      - ocssrv:/var/lib/ocsinventory-reports/
-    links :
-      - dbocs
-    networks:
-      - ocs_localocs
-    ports :
-      - 8091:80
-      - 4441:443
+services:
+  bootstack-client:
+    image: bitnami/mediawiki:latest
+    container_name: bootstack-client
+    restart: always
+    ports:
+      - "8081:8080"
+    environment:
+      - MEDIAWIKI_DATABASE_HOST=bootstack-db-client
+      - MEDIAWIKI_DATABASE_NAME=mediawiki
+      - MEDIAWIKI_DATABASE_USER=mediawiki
+      - MEDIAWIKI_DATABASE_PASSWORD=mediawiki
+    depends_on:
+      - bootstack-db-client
 
-  dbocs:
-    image : mysql:5.7
-    # container_name : ocsinventory-db3
+  bootstack-db-client:
+    image: mariadb
+    container_name: bootstack-db-client
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD : inventaire
-      MYSQL_USER : inventaire
-      MYSQL_PASSWORD : inventaire
-      MYSQL_DATABASE : dbocs
-    volumes :
-      - ./sql/:/docker-entrypoint-initdb.d/
-      - ocsdata:/var/lib/mysql
-    networks:
-      - ocs_localocs
-      
-networks:
-  ocs_localocs:
-    attachable: true
+      - MYSQL_DATABASE=mediawiki
+      - MYSQL_USER=mediawiki
+      - MYSQL_PASSWORD=mediawiki
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - ./bootstack-data:/data        
 
 volumes:
-  ocsdata:
-    driver: local
-  ocssrv:
-    driver: local
+  bootstack-db-data:
   
+
