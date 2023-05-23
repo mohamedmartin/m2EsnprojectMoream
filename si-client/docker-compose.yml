@@ -1,0 +1,133 @@
+version: "3.9"
+
+services:
+  itop-client:
+    image: vbkunin/itop
+    container_name: itop-client
+    restart: always
+    ports:
+      - "80:80"
+    environment:
+      - DB_HOST=itop-db-client
+      - DB_NAME=itop
+      - DB_USER=itop
+      - DB_PASSWORD=itop
+
+  odoo-client:
+    container_name: odoo-client
+    image: odoo:14
+    depends_on:
+      - odoo-db-client
+    ports:
+      - "8069:8069"
+    environment:
+      - HOST=odoo-db-client
+      - USER=odoo
+      - PASSWORD=odoo
+      - DB_NAME=postgres
+      - PGUSER=odoo
+      - PGPASSWORD=odoo
+      - PGHOST=odoo-db-client
+    volumes:
+      - odoo_data:/var/lib/odoo
+      - odoo_addons:/mnt/extra-addons
+
+  wordpress-client:
+    image: wordpress
+    container_name: wordpress-client
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: wordpress-db-client
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+    depends_on:
+      - wordpress-db-client
+
+  bootstack-client:
+    image: bitnami/mediawiki:latest
+    container_name: bootstack-client
+    restart: always
+    ports:
+      - "8081:8080"
+    environment:
+      - MEDIAWIKI_DATABASE_HOST=bootstack-db-client
+      - MEDIAWIKI_DATABASE_NAME=mediawiki
+      - MEDIAWIKI_DATABASE_USER=mediawiki
+      - MEDIAWIKI_DATABASE_PASSWORD=mediawiki
+    depends_on:
+      - bootstack-db-client
+
+  itop-db-client:
+    image: mariadb
+    container_name: itop-db-client
+    restart: always
+    environment:
+      - MYSQL_DATABASE=itop
+      - MYSQL_USER=itop
+      - MYSQL_PASSWORD=itop
+      - MYSQL_ROOT_PASSWORD=root
+
+  odoo-db-client:
+    container_name: odoo-db-client
+    image: postgres:12
+    environment:
+      - POSTGRES_USER=odoo
+      - POSTGRES_PASSWORD=odoo
+      - POSTGRES_DB=postgres
+    volumes:
+      - odoo-db_data:/var/lib/postgresql/data
+
+  wordpress-db-client:
+    image: mysql
+    container_name: wordpress-db-client
+    restart: always
+    environment:
+      - MYSQL_DATABASE=wordpress
+      - MYSQL_USER=wordpress
+      - MYSQL_PASSWORD=wordpress
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - ./wordpress-data:/data        
+
+  bootstack-db-client:
+    image: mariadb
+    container_name: bootstack-db-client
+    restart: always
+    environment:
+      - MYSQL_DATABASE=mediawiki
+      - MYSQL_USER=mediawiki
+      - MYSQL_PASSWORD=mediawiki
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - ./bootstack-data:/data        
+
+  portainer-client:
+    image: portainer/portainer-ce
+    container_name: portainer-client
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./portainer_data:/data
+    ports:
+      - "9001:9000"
+
+  heimdall-central:
+    image: linuxserver/heimdall
+    container_name: heimdall-central
+    restart: always
+    volumes:
+      - ./heimdall_config:/config
+    ports:
+      - "9595:80"
+
+volumes:
+  itop-db-data:
+  wordpress-db-data:
+  bootstack-db-data:
+  portainer_data:
+  odoo-db_data:
+  odoo_data:
+  odoo_addons:

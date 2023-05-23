@@ -1,0 +1,58 @@
+version: "3.0"
+
+services:
+  portainer-central:
+    image: portainer/portainer-ce
+    container_name: portainer-central
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./portainer_data:/data
+    ports:
+      - "9000:9000"
+
+  zabbix-db-central:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: zabbix
+      POSTGRES_DB: zabbix
+      TZ: Europe/Paris
+    volumes:
+      - ./zabbix-db-data:/var/lib/postgresql/data
+
+
+  zabbix-web-central:
+    image: zabbix/zabbix-web-nginx-pgsql:latest
+    depends_on:
+      - zabbix-db-central
+    ports:
+      - "8095:8080"
+    environment:
+      DB_SERVER_HOST: zabbix-db-central
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: zabbix
+      POSTGRES_DB: zabbix
+      ZBX_SERVER_HOST: zabbix
+    restart: always
+
+  ocsinventory-central:
+    image: ocsinventory/ocsinventory-docker-image
+    container_name: ocsinventory-central
+    restart: always
+    ports:
+      - "8181:80"
+
+  heimdall-central:
+    image: linuxserver/heimdall
+    container_name: heimdall-central
+    restart: always
+    volumes:
+      - ./heimdall_config:/config
+    ports:
+      - "9090:80"
+
+volumes:
+  portainer_data:
+  zabbix_data:
+  heimdall_config:

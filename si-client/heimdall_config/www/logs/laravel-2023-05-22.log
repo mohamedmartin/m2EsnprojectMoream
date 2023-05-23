@@ -1,0 +1,58 @@
+[2023-05-22 18:48:33] local.DEBUG: Process Apps dispatched  
+[2023-05-22 18:48:33] local.DEBUG: Process Apps dispatched  
+[2023-05-22 18:48:34] local.DEBUG: Update of all apps triggered!  
+[2023-05-22 18:48:34] local.DEBUG: Update of all apps finished!  
+[2023-05-22 18:48:34] local.DEBUG: Process Apps dispatched  
+[2023-05-22 18:51:36] local.DEBUG: Process Apps dispatched  
+[2023-05-22 18:59:21] local.DEBUG: Process Apps dispatched  
+[2023-05-22 18:59:24] local.DEBUG: Process Apps dispatched  
+[2023-05-22 19:00:51] local.DEBUG: Process Apps dispatched  
+[2023-05-22 19:00:51] local.DEBUG: Process Apps dispatched  
+[2023-05-22 19:01:00] local.DEBUG: Process Apps dispatched  
+[2023-05-22 19:01:02] local.DEBUG: Process Apps dispatched  
+[2023-05-22 19:01:14] local.DEBUG: Process Apps dispatched  
+[2023-05-22 19:01:14] local.DEBUG: Get app triggered for: b1909932aac1c5510c044de0cb8c0f3ef049a250  
+[2023-05-22 19:01:14] local.DEBUG: Download triggered for stdClass Object
+(
+    [appid] => b1909932aac1c5510c044de0cb8c0f3ef049a250
+    [name] => WordPress
+    [website] => https://wordpress.org
+    [license] => GNU General Public License v2.0 only
+    [description] => WordPress is open source software you can use to create a beautiful website, blog, or app.
+    [enhanced] => 
+    [tile_background] => dark
+    [icon] => wordpress.svg
+    [sha] => 0ef26137a5179a972debc881a49dae7fd9c0f61d
+    [class] => \App\SupportedApps\WordPress\WordPress
+)
+  
+[2023-05-22 19:04:09] local.DEBUG: Get app triggered for: 348c49dd03dddd418929316668d2e67bf2d9ae88  
+[2023-05-22 19:04:09] local.DEBUG: Download triggered for stdClass Object
+(
+    [appid] => 348c49dd03dddd418929316668d2e67bf2d9ae88
+    [name] => Bookstack
+    [website] => https://www.bookstackapp.com
+    [license] => MIT License
+    [description] => BookStack is a simple, self-hosted, easy-to-use platform for organising and storing information.
+    [enhanced] => 1
+    [tile_background] => dark
+    [icon] => bookstack.svg
+    [sha] => 3535aa06c2c6f1b4bb4f4bd61ffc102a986adbf4
+    [class] => \App\SupportedApps\Bookstack\Bookstack
+)
+  
+[2023-05-22 19:05:48] local.DEBUG: Get app triggered for: 07b796b3a10eaa8b6f485ed2379187a39400b459  
+[2023-05-22 19:05:48] local.DEBUG: Download triggered for stdClass Object
+(
+    [appid] => 07b796b3a10eaa8b6f485ed2379187a39400b459
+    [name] => Portainer
+    [website] => https://portainer.io
+    [license] => zlib License
+    [description] => Portainer is a simple management solution for Docker. Easily manage your Docker hosts and Docker Swarm clusters via Portainer web user interface.
+    [enhanced] => 1
+    [tile_background] => dark
+    [icon] => portainer.svg
+    [sha] => 94a81b07f372894d0b6db212e2bb33681a1c839c
+    [class] => \App\SupportedApps\Portainer\Portainer
+)
+  
