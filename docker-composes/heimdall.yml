@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+  heimdall-central:
+    image: linuxserver/heimdall
+    container_name: heimdall-central
+    restart: always
+    volumes:
+      - ./heimdall_config:/config
+    ports:
+      - "9595:80"
+
+
+

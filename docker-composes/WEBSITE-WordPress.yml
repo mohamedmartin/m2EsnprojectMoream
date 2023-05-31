@@ -1,0 +1,34 @@
+version: "3.9"
+
+services:
+  wordpress-client:
+    image: wordpress
+    container_name: wordpress-client
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: wordpress-db-client
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+    depends_on:
+      - wordpress-db-client
+      
+  wordpress-db-client:
+    image: mysql
+    container_name: wordpress-db-client
+    restart: always
+    environment:
+      - MYSQL_DATABASE=wordpress
+      - MYSQL_USER=wordpress
+      - MYSQL_PASSWORD=wordpress
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - ./wordpress-data:/data        
+      
+volumes:
+  wordpress-db-data:
+  bootstack-db-data:
+ 
+

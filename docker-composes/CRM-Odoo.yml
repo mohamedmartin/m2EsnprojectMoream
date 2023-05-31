@@ -1,29 +1,33 @@
 version: '2'
 services:
-  web:
-    image: odoo:latest
+  odoo-client:
+    container_name: odoo-client
+    image: odoo:14
     depends_on:
-      - db
+      - odoo-db-client
     ports:
-      - "801:8069"
+      - "8069:8069"
     environment:
-    - USER=odoo
-    - PASSWORD=;$E#Ssh6jhc!fPW
+      - HOST=odoo-db-client
+      - USER=odoo
+      - PASSWORD=odoo
+      - DB_NAME=postgres
+      - PGUSER=odoo
+      - PGPASSWORD=odoo
+      - PGHOST=odoo-db-client
     volumes:
-      - odoo-web-data:/var/lib/odoo
-      - odoo-web-config:/etc/odoo
-      - odoo-web-addons:/mnt/extra-addons
-  db:
-    image: postgres:10
+      - odoo_data:/var/lib/odoo
+      - odoo_addons:/mnt/extra-addons
+  odoo-db-client:
+    container_name: odoo-db-client
+    image: postgres:12
     environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_PASSWORD=;$E#Ssh6jhc!fPW
       - POSTGRES_USER=odoo
-      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_PASSWORD=odoo
+      - POSTGRES_DB=postgres
     volumes:
-      - odoo-db-data:/var/lib/postgresql/data/pgdata
+      - odoo-db_data:/var/lib/postgresql/data
 volumes:
-  odoo-web-data:
-    driver: local
-  odoo-db-data:
-    driver: local
+  odoo-db_data:
+  odoo_data:
+  odoo_addons:
