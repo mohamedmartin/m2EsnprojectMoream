@@ -11,23 +11,79 @@ services:
     ports:
       - "9000:9000"
 
+#  zabbix-db-central:
+#    container_name: zabbix-db-central
+#    image: postgres:latest
+#    restart: always
+#    ports:
+#      - "5432:5432"
+#    environment:
+#      POSTGRES_PASSWORD: zabbix
+#      POSTGRES_DB: zabbix
+#      TZ: Europe/Paris
+#    volumes:
+#      - ./zabbix-db-data:/var/lib/postgresql/data
+
+
+#  zabbix-web-central:
+#    container_name: zabbix-central
+#    image: zabbix/zabbix-web-nginx-pgsql:latest
+#    depends_on:
+#      - zabbix-db-central
+#    ports:
+#      - "8095:8080"
+#    environment:
+#      DB_SERVER_HOST: zabbix-db-central
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: zabbix
+#      POSTGRES_DB: zabbix
+#      ZBX_SERVER_HOST: zabbix
+#    restart: always
+
+#  ocsinventory-central:
+#    image: ocsinventory/ocsinventory-docker-image
+#    container_name: ocsinventory-central
+#    restart: always
+#    ports:
+#      - "8181:80"
+
   zabbix-db-central:
     image: postgres
+    container_name: zabbix-db-central
     restart: always
     environment:
       POSTGRES_PASSWORD: zabbix
       POSTGRES_DB: zabbix
       TZ: Europe/Paris
     volumes:
-      - ./zabbix-db-data:/var/lib/postgresql/data
+      - ./zabbix-db-central:/var/lib/postgresql/data
 
-
-  zabbix-web-central:
-    image: zabbix/zabbix-web-nginx-pgsql:latest
+  zabbix-agent-central:
+    image: zabbix/zabbix-server-pgsql:latest
+    container_name: zabbix_active_agent
     depends_on:
       - zabbix-db-central
     ports:
-      - "8095:8080"
+      - 10051:10051
+      - 10050:10050
+    environment:
+      DB_SERVER_HOST: zabbix-db-central
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: zabbix
+      POSTGRES_DB: zabbix
+      ZBX_DATABASE_SCHEMA: zabbix
+    volumes:
+      - ./zabbix-agent-central:/var/lib/zabbix
+    restart: always
+
+  zabbix-web-central:
+    image: zabbix/zabbix-web-nginx-pgsql:latest
+    container_name: zabbix-web-central
+    depends_on:
+      - zabbix-db-central
+      - zabbix-agent-central
+    ports:
+      - 8095:8080
     environment:
       DB_SERVER_HOST: zabbix-db-central
       POSTGRES_USER: postgres
@@ -36,12 +92,40 @@ services:
       ZBX_SERVER_HOST: zabbix
     restart: always
 
-  ocsinventory-central:
-    image: ocsinventory/ocsinventory-docker-image
-    container_name: ocsinventory-central
+
+  ocs-central:
+    image : ocsinventory/ocsinventory-docker-image:latest
+    container_name : ocs-central
+    environment :
+      OCS_DBNAME : ocsweb
+      OCS_DBSERVER_READ : ocsinventory-db
+      OCS_DBSERVER_WRITE : ocsinventory-db
+      OCS_DBUSER : ocs
+      OCS_DBPASS : ocs
+    volumes :
+      - ocsdownload:/usr/share/ocsinventory-reports/ocsreports/download/
+      - ocssrv:/etc/ocsinventory-reports/
+      - ocslib:/var/lib/ocsinventory-reports/
+    links :
+      - ocs-db-central
+    ports :
+      - 8040:80
+
+
+  ocs-db-central :
+    image : mysql:5.7
+    container_name : ocs-db-central
     restart: always
-    ports:
-      - "8181:80"
+    environment:
+      MYSQL_ROOT_PASSWORD : mdp
+      MYSQL_USER : ocs
+      MYSQL_PASSWORD : ocs
+      MYSQL_DATABASE : ocsweb
+    volumes :
+      - ./ocs-sql/:/docker-entrypoint-initdb.d/
+      - ocsdata:/var/lib/mysql
+    ports :
+      - 3306:3306
 
   heimdall-central:
     image: linuxserver/heimdall
@@ -54,5 +138,9 @@ services:
 
 volumes:
   portainer_data:
-  zabbix_data:
+  zabbix-agent-central:
   heimdall_config:
+  ocsdata:
+  ocsdownload:
+  ocssrv:
+  ocslib:
